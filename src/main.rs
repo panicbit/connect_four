@@ -103,6 +103,12 @@ impl Field {
 
         println!();
     }
+
+    fn is_full(&self) -> bool {
+        self.0.iter().all(|row|
+            row.iter().all(|piece| piece.is_some())
+        )
+    }
 }
 
 struct Game {
@@ -111,6 +117,8 @@ struct Game {
 }
 
 impl Game {
+    const REQUIRED_PIECES_TO_WIN: usize = 4;
+
     pub fn new() -> Self {
         Self {
             field: Field::new(),
@@ -153,7 +161,7 @@ impl Game {
         for x in 0..Field::WIDTH as isize {
             for y in 0..Field::WIDTH as isize {
                 'dirs: for (xd, yd) in &dirs {
-                    for n in 0..4isize {
+                    for n in 0..Self::REQUIRED_PIECES_TO_WIN as isize {
                         let x = x + n * xd;
                         let y = y + n * yd;
 
@@ -182,6 +190,12 @@ impl Game {
             if self.won() {
                 self.field.print();
                 println!("Player '{}' wins!", self.current_player.char());
+                break;
+            }
+
+            if self.field.is_full() {
+                self.field.print();
+                println!("Draw!");
                 break;
             }
 
