@@ -183,9 +183,14 @@ impl Game {
             self.field.print();
             println!("Turn of player '{}'", self.current_player.char());
 
-            let col = self.prompt_for_column();
+            loop {
+                let col = self.prompt_for_column();
 
-            self.field.insert(col, self.current_player).unwrap();
+                match self.field.insert(col, self.current_player) {
+                    Err(e) => println!("{}", e),
+                    Ok(()) => break,
+                }
+            }
 
             if self.won() {
                 self.field.print();
